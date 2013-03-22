@@ -79,7 +79,7 @@
 
 \begin{frame}[fragile]
   \frametitle{Character encodings in Python 2}
-  Python 2.7 assumes all strings are ASCII, but this is sometimes concealed from me because the Ipython interpreter tries to convert silently to known encodings (here, utf-8):
+  Python 2.7 assumes all strings are ASCII, but this is sometimes concealed from me because the Ipython interpreter tries to convert silently to something it can print, showing non-ASCII bytes explicitly:
    \vskip12pt \begin{lstlisting}[escapechar=\%]
 In [1]: a = 'Tin%\'e%'
 
@@ -91,7 +91,7 @@ Out[2]: 'Tin\xc3\xa9'
 
 \begin{frame}[fragile]
   \frametitle{Unicode in Python 2}
-  Python 2.7 also allows strings to be specified as Unicode with a \texttt{u} prefix, and here again the Ipython interpreter converts silently, this time to to iso-8859-1 or ``latin-1'':
+  Python 2.7 also allows strings to be specified as Unicode with a \texttt{u} prefix, and here again the Ipython interpreter converts silently to something it can print:
   \vskip12pt  \begin{lstlisting}[escapechar=\%]
 In [1]: a = 'Tin%\'e%'
 
