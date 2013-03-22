@@ -1,0 +1,241 @@
+\documentclass{beamer}
+
+\usepackage{beamerthemesplit} % Activate for custom appearance
+%\usecolortheme{seahorse}
+\usecolortheme{wolverine}
+
+\usepackage{ulem}			% allows underlining
+
+\usepackage{listings}
+\lstset{language=Python,basicstyle=\ttfamily\footnotesize,frame=lines,captionpos=b,tabsize=4,keywordstyle=\color{blue},commentstyle=\color{dark-green},stringstyle=\color{red},numbers=left,numberstyle=\tiny,numbersep=5pt,breaklines=true,showstringspaces=false,extendedchars=true}
+
+\title{Encodings}
+\author{David Branner}
+\date{Hacker School, New York City\\ \today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+%\section[Outline]{}
+\frame{\tableofcontents}
+
+\section[Outline]{Basic ideas}
+\subsection{Terms}
+
+\frame
+{
+  \frametitle{Terms}
+
+  \begin{itemize}
+  \item<1-> \textbf{encoding}\uncover<2->{: process for converting information into patterns or symbols\uncover<3->{ --- has cognitive parallels
+  \item<4-> \textbf{character encoding}\uncover<5->{: process for converting \uline{written characters} into patterns or symbols
+  \item<6-> \textbf{codec}\uncover<7->{ = coder-decoder\uncover<86->{: tool (normally a program or routine) for changing encodings}}}}}
+  \end{itemize}
+}
+
+
+\subsection{The key point}
+\frame
+{
+  \frametitle{The key point}
+  Encodings collectively are like a system of types for characters and strings of characters.
+  
+\vskip12pt They can cause problems if you don't realize that a particular encoding is required or being supplied.
+}
+
+\frame
+{
+  \frametitle{Well known encodings}
+  \begin{itemize}
+  \item<1-> ASCII
+  \item<2-> ISO\uncover<3->{'s encodings\uncover<4->{: iso-8859-1, etc.\uncover<4->{\footnotesize\\(ISO = The International Organization for Standardization)}}}
+  \item<5-> Unicode\uncover<6->{ Consortium's ``UTF'' encodings\uncover<7->{: utf-8, etc.}}
+  \end{itemize}
+}
+
+\subsection{What the well-known encodings encode}
+\frame
+{
+  \frametitle{What the well-known encodings encode}
+  \begin{itemize}
+  \item<1-> ASCII\uncover<2->{: English\uncover<3->{ --- what you find on a standard US keyboard\uncover<4->{: \begin{itemize}
+	\item\uncover<5->{ letters \texttt{a-z} and \texttt{A-Z}
+	\item\uncover<6->{ numerals \texttt{0-9}
+	\item\uncover<7->{ 33 common symbols
+\end{itemize}}}}}}}
+  \item<8-> ISO\uncover<9->{:\begin{itemize}
+	\item iso-8859-1\uncover<10->{: most languages of Western Europe\uncover<11->{, including many Roman letters with diacritics (\`e, \"o, \c{c}, etc.)
+	\item \uncover<12->{iso-8859-2: covers Central Europe: more diacritics (\'s, \l, \v{c}, etc.)
+	\item \uncover<13->{iso-8859-5: covers Cyrillic\uncover<14->{; etc.,~etc.}
+\end{itemize}}}}}}
+
+  \item<15-> UTF encodings\uncover<16->{: ``all'' characters in all known writing systems\uncover<17->{ --- c. 70K CJK characters\uncover<18->{, numerous Semitic alphabets and abugidas\uncover<19->{, Linear B\uncover<20->{, Y\'i (Loloish)\uncover<21->{, the International Phonetic Alphabet, etc.,~etc.,~etc.
+\end{itemize}}}}}}}
+}
+
+\section{Examples of encodings in programming life}
+\subsection{Character encodings in Python 2}
+
+\begin{frame}[fragile]
+  \frametitle{Character encodings in Python 2}
+  Python 2.7 assumes all strings are ASCII, but this is sometimes concealed from me because the Ipython interpreter tries to convert silently to known encodings (here, utf-8):
+   \vskip12pt \begin{lstlisting}[escapechar=\%]
+In [1]: a = 'Tin%\'e%'
+
+In [2]: a
+Out[2]: 'Tin\xc3\xa9'
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Unicode in Python 2}
+  Python 2.7 also allows strings to be specified as Unicode with a \texttt{u} prefix, and here again the Ipython interpreter converts silently, this time to to iso-8859-1 or ``latin-1'':
+  \vskip12pt  \begin{lstlisting}[escapechar=\%]
+In [1]: a = 'Tin%\'e%'
+
+In [2]: a
+Out[2]: 'Tin\xc3\xa9'
+
+In [3]: b = u'Tin%\'e%'
+
+In [4]: b
+Out[4]: u'Tin\xe9'
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Explicit encodings in Python 2}
+  Python 2.7 also lets you convert explicitly to known encodings:
+   \begin{lstlisting}[escapechar=\%]
+In [3]: b = u'Tin%\'e%'
+
+In [4]: b
+Out[4]: u'Tin\xe9'
+
+In [5]: b.encode('utf-8')
+Out[5]: 'Tin\xc3\xa9'
+
+In [6]: b.encode('latin-1')
+Out[6]: 'Tin\xe9'
+\end{lstlisting}
+
+See \url{http://docs.python.org/2.7/library/codecs.html#standard-encodings} for a long list of these.
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Unicode in Python 3}
+  Python 3 treats all strings as Unicode; the alternative is ``bytecode'':
+   \begin{lstlisting}[escapechar=\%]
+In [1]: a = 'Tin%\'e%'
+
+In [2]: a
+Out[2]: 'Tin%\'e%'
+
+In [3]: a.encode()
+Out[3]: b'Tin\xc3\xa9'
+
+In [4]: type(a.encode())
+Out[4]: builtins.bytes
+\end{lstlisting}
+
+\uncover<2->{Explicit encoding as in Python 2 is still possible, but Unicode is now the norm.}
+
+\end{frame}
+
+\subsection{Output from methods in the standard library}
+
+\begin{frame}[fragile]
+  \frametitle{Bytecode in Python 3}
+Many modules in the standard library return bytecode that has to be explicitly converted to the \texttt{str} type (i.e., Unicode) before it can be used easily.
+
+\vskip24pt
+
+Example\dots
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Bytecode returned by Python 3 methods}
+   \begin{lstlisting}
+In [5]: import urllib.request
+    url = 'http://hackerschool.com'
+    x = urllib.request.urlopen(url).read()
+    type(x)
+Out[5]: builtins.bytes
+\end{lstlisting}
+
+To convert to true \texttt{str} type:
+\begin{lstlisting}
+In [6]: y = x.decode()
+    type(y)
+Out[6]: builtins.str
+\end{lstlisting}
+
+\vskip12pt Among the methods that are available to \texttt{str} but not to \texttt{bytes} are \texttt{format()} and \texttt{isprintable()}. 
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Bytecode vs Unicode in Python 3}
+And if a function (for instance in the \texttt{re} module) requires a true string as its argument, you must use \texttt{decode()} on bytecode before passing it in:
+
+\vskip12pt\begin{lstlisting}[escapechar=\%]
+In [7]: import re
+    z = re.compile('.')
+    z.search(x)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-17-ad5b6e1ce192> in <module>()
+----> 1 z.search(x)
+
+TypeError: can%'%t use a string pattern on a bytes-like object
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Bytecode vs Unicode in Python 3, cont'd}
+\texttt{decode()} changes it to a true (Unicode) string first --- after that, it can be used with all sorts of methods that require a string:\vskip12pt\begin{lstlisting}
+In [8]: z.search(x.decode())
+Out[8]: <_sre.SRE_Match at 0x231bbf8>
+
+In [9]: z.search(x.decode()).group()
+Out[9]: '<'
+\end{lstlisting}
+
+\end{frame}
+
+\section{To recapitulate: the key point}
+\frame
+{
+  \frametitle{To recapitulate: the key point}
+  \textbf{To recapitulate: the key point}
+  
+\vskip12pt Encodings collectively are like a system of types for characters and strings of characters.
+  
+\vskip12pt They can cause problems if you don't realize that a particular encoding is required or being supplied.
+}
+
+
+
+%%%%%%%
+
+\frame{\begin{center}\Huge END\end{center}}
+
+\end{document}
+
+
+% 
+
+
+
+
